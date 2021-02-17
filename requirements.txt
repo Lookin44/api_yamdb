@@ -34,3 +34,5 @@ virtualenv==20.0.31
 virtualenv-clone==0.5.4
 wcwidth==0.1.9
 zipp==3.1.0
+
+python-dotenv~=0.15.0
