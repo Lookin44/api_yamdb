@@ -10,8 +10,8 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    pass
+    name = models.CharField(max_length=200, verbose_name='жанр')
+    slug = models.SlugField(primary_key=True, unique=True, verbose_name='уникальное имя')
 
-
-class Title(models.Model):
-    pass
+    def __str__(self):
+        return self.name
