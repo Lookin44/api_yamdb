@@ -1,27 +1,25 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 
 class User(AbstractUser):
-    class Role(models.TextChoices):
-        USER = 'user',
-        MODERATOR = 'moderator',
-        ADMIN = 'admin',
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+    ROLE = [
+        (USER, 'user'),
+        (MODERATOR, 'moderator'),
+        (ADMIN, 'admin')
+        ]
 
-    password = models.CharField(max_length=100, blank=True)
+    password = models.CharField(max_length=50, blank=True)
     email = models.EmailField(unique=True, blank=False)
-    bio = models.TextField(max_length=256, blank=True)
-    username = models.CharField(max_length=50, unique=True)
+    bio = models.TextField(blank=True)
+    username = models.CharField(max_length=50, unique=True, blank=True)
+    first_name = models.CharField(max_length=50, blank=True)
+    last_name = models.CharField(max_length=50, blank=True)
     role = models.CharField(
         max_length=10,
-        choices=Role.choices,
-        default=Role.USER
+        choices=ROLE,
+        default=USER
     )
-
-    @property
-    def is_admin(self):
-        return self.role == self.Role.ADMIN or self.is_superuser
-
-    @property
-    def is_moderator(self):
-        return self.role == self.Role.MODERATOR
