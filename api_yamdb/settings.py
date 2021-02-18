@@ -1,6 +1,6 @@
 import os
-from datetime import timedelta
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
@@ -21,8 +21,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
-    'users',
     'api',
+    'users',
 ]
 
 MIDDLEWARE = [
