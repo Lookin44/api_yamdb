@@ -6,11 +6,10 @@ from .serializers import CategorySerializer
 
 class IsAdminOrReadOnlyPermission(permissions.BasePermission):
     def has_permission(self, request, view):
-
         if request.method == 'GET':
             return True
 
-        return request.user.is_authenticated and request.user.is_admin
+        return request.user.is_authenticated
 
 
 class CategoryViewSet(
