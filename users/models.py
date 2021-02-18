@@ -3,14 +3,10 @@ from django.db import models
 
 
 class User(AbstractUser):
-    USER = 'user'
-    MODERATOR = 'moderator'
-    ADMIN = 'admin'
-    ROLE = [
-        (USER, 'user'),
-        (MODERATOR, 'moderator'),
-        (ADMIN, 'admin')
-        ]
+    class RoleUser(models.TextChoices):
+        USER = 'user'
+        MODERATOR = 'moderator'
+        ADMIN = 'admin'
 
     password = models.CharField(max_length=50, blank=True)
     email = models.EmailField(unique=True, blank=False)
@@ -20,6 +16,6 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50, blank=True)
     role = models.CharField(
         max_length=10,
-        choices=ROLE,
-        default=USER
+        choices=RoleUser.choices,
+        default=RoleUser.USER
     )
