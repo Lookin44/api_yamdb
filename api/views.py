@@ -1,7 +1,8 @@
+import django_filters
 from rest_framework import filters, mixins, viewsets, permissions
 
-from .models import Category, Genre
-from .serializers import CategorySerializer, GenreSerializer
+from .models import Category, Genre, Title
+from .serializers import CategorySerializer, GenreSerializer, TitleSerializer
 
 
 class IsAdminOrReadOnlyPermission(permissions.BasePermission):
@@ -35,4 +36,21 @@ class GenreViewSet(
     serializer_class = GenreSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
+    permission_classes = [IsAdminOrReadOnlyPermission]
+
+
+class TitleFilterBackend(django_filters.rest_framework.DjangoFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        name = request.query_params.get('name')
+        if name:
+            return queryset.filter(name__contains=name)
+
+        return super(TitleFilterBackend, self).filter_queryset(request, queryset, view)
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    filter_backends = [TitleFilterBackend]
+    filter_fields = ['name', 'genre', 'category', 'year']
     permission_classes = [IsAdminOrReadOnlyPermission]
