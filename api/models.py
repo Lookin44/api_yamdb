@@ -32,12 +32,3 @@ class Title(models.Model):
         Genre,
         related_name='titles',
     )
-
-    # rating = models.ForeignKey(
-    #     Review,
-    #     on_delete=models.CASCADE,
-    #     verbose_name='рейтинг',
-    #     related_name='titles',
-
-
-
