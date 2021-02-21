@@ -7,4 +7,8 @@ class TitleFilterBackend(django_filters.rest_framework.DjangoFilterBackend):
         if name:
             return queryset.filter(name__contains=name)
 
-        return super(TitleFilterBackend, self).filter_queryset(request, queryset, view)
+        return super(TitleFilterBackend, self).filter_queryset(
+            request,
+            queryset,
+            view
+        )
