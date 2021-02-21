@@ -44,15 +44,6 @@ class Title(models.Model):
     )
 
 
-class Title(models.Model):
-    name = models.CharField(max_length=200)
-    description = models.TextField()
-    year = models.IntegerField()
-
-    def __str__(self):
-        return self.name
-
-
 class Review(models.Model):
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
