@@ -1,4 +1,3 @@
-from django_filters import fields
 from rest_framework import serializers
 
 from .models import Category, Genre, Title
