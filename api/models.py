@@ -37,7 +37,6 @@ class Title(models.Model):
         verbose_name='категория',
         related_name='titles'
     )
-
     genre = models.ManyToManyField(
         Genre,
         related_name='titles',
@@ -74,6 +73,9 @@ class Comment(models.Model):
                                on_delete=models.CASCADE,
                                related_name="comments")
     text = models.TextField()
+
     pub_date = models.DateTimeField("Дата добавления",
                                     auto_now_add=True,
                                     db_index=True)
+
+

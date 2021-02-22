@@ -3,7 +3,6 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
 from django.db.utils import IntegrityError
 
-
 from .permissions import IsAuthorOrReadOnly, IsAdminOrReadOnlyPermission
 from .models import Category, Genre, Review, Title
 from .serializers import (CategorySerializer,
