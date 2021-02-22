@@ -5,8 +5,9 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 
 from .permissions import IsAdminOrReadOnlyPermission
-from .models import Category, Genre, Title, Review, Title
-from .serializers import CategorySerializer, GenreSerializer, TitleSerializer, ReviewSerializer, CommentSerializer
+from .models import Category, Genre, Title, Review
+from .serializers import CategorySerializer,\
+    GenreSerializer, TitleSerializer, ReviewSerializer, CommentSerializer
 from .filters import TitleFilterBackend
 
 

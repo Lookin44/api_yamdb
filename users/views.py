@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import User
 from .permissions import AdminPermission
-from .serializers import UserSerializer, UserInfoSerializer
+from .serializers import UserSerializer
 
 
 class UserViewSet(ModelViewSet):
@@ -21,13 +21,14 @@ class UserInfo(APIView):
 
     def get(self, request):
         queryset = User.objects.get(username=request.user.username)
-        serializer = UserInfoSerializer(queryset)
+        serializer = UserSerializer(queryset)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request):
         user = User.objects.get(username=request.user.username)
-        serializer = UserInfoSerializer(user, data=request.data, partial=True)
+        serializer = UserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
