@@ -42,16 +42,6 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = '__all__'
         model = Title
 
-    def get_rating(self, obj):
-        reviews = obj.reviews.all()
-        if len(reviews) > 0:
-            sum_scores = 0
-            for review in reviews:
-                sum_scores += review.score
-            avg = sum_scores/len(reviews)
-            return avg
-        return None
-
 
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
