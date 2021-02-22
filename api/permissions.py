@@ -6,4 +6,4 @@ class IsAdminOrReadOnlyPermission(permissions.BasePermission):
         if request.method == 'GET':
             return True
 
-        return request.user.is_authenticated
+        return request.user.is_authenticated or request.user.is_superuser

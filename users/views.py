@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -6,7 +7,18 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import User
 from .permissions import AdminPermission
-from .serializers import UserSerializer
+from .serializers import UserSerializer, EmailSerializer, TokenSerializer
+
+
+# @api_view(['POST'])
+# def confirmation_code(request):
+#     serializer = EmailSerializer(data=request.data)
+#     serializer.is_valid(raise_exception=True)
+#
+#     email = serializer.data['email']
+#     user_in_database = User.objects.filter(email=email).exists()
+#     if not user_in_database:
+#         username =
 
 
 class UserViewSet(ModelViewSet):
