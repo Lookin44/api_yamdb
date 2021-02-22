@@ -35,22 +35,13 @@ class Title(models.Model):
         Category,
         on_delete=models.CASCADE,
         verbose_name='категория',
-        related_name='titles',
+        related_name='titles'
     )
 
     genre = models.ManyToManyField(
         Genre,
         related_name='titles',
     )
-
-
-class Title(models.Model):
-    name = models.CharField(max_length=200)
-    description = models.TextField()
-    year = models.IntegerField()
-
-    def __str__(self):
-        return self.name
 
 
 class Review(models.Model):
@@ -62,12 +53,12 @@ class Review(models.Model):
                               related_name="reviews")
     text = models.TextField()
     score = models.IntegerField(null=True, blank=True)
-    created = models.DateTimeField("Дата добавления",
-                                   auto_now_add=True,
-                                   db_index=True)
+    pub_date = models.DateTimeField("Дата добавления",
+                                    auto_now_add=True,
+                                    db_index=True)
 
     class Meta:
-        ordering = ['-created']
+        ordering = ['-pub_date']
         constraints = [
             models.UniqueConstraint(
                 fields=['author', 'title'],
@@ -83,6 +74,6 @@ class Comment(models.Model):
                                on_delete=models.CASCADE,
                                related_name="comments")
     text = models.TextField()
-    created = models.DateTimeField("Дата добавления",
-                                   auto_now_add=True,
-                                   db_index=True)
+    pub_date = models.DateTimeField("Дата добавления",
+                                    auto_now_add=True,
+                                    db_index=True)
