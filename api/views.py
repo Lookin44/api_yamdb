@@ -1,16 +1,13 @@
-from rest_framework import filters, mixins, viewsets, serializers
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from django.shortcuts import get_object_or_404
 from django.db.utils import IntegrityError
+from django.shortcuts import get_object_or_404
+from rest_framework import filters, mixins, serializers, viewsets
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from .permissions import IsAuthorOrReadOnly, IsAdminOrReadOnlyPermission
-from .models import Category, Genre, Review, Title
-from .serializers import (CategorySerializer,
-                          GenreSerializer,
-                          TitleSerializer,
-                          ReviewSerializer,
-                          CommentSerializer)
 from .filters import TitleFilterBackend
+from .models import Category, Genre, Review, Title
+from .permissions import IsAdminOrReadOnlyPermission, IsAuthorOrReadOnly
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, ReviewSerializer, TitleSerializer)
 
 
 class CustomViewSet(
