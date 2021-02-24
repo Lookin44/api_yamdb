@@ -2,6 +2,8 @@ from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, mixins, serializers, viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django.db.models import Avg
+
 
 from .filters import TitleFilterBackend
 from .models import Category, Genre, Review, Title
@@ -36,7 +38,7 @@ class GenreViewSet(CustomViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
     serializer_class = TitleSerializer
     filter_backends = [TitleFilterBackend]
     filter_fields = ['name', 'genre', 'category', 'year']

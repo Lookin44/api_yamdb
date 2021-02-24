@@ -1,3 +1,5 @@
+import datetime as dt
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from users.models import User
@@ -27,9 +29,22 @@ class Genre(models.Model):
         return self.name
 
 
+def year_validator(value):
+    if value > dt.datetime.now().year:
+        raise ValidationError(
+            _('Введите корректный год!'),
+            params={'value': value},
+        )
+
+
 class Title(models.Model):
     name = models.CharField(max_length=200, verbose_name='название')
-    year = models.IntegerField()
+    year = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        validators=[year_validator],
+        verbose_name="год издания"
+    )
     description = models.TextField(verbose_name='описание')
     category = models.ForeignKey(
         Category,
@@ -47,13 +62,13 @@ class Title(models.Model):
 class Review(models.Model):
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
-                               related_name="reviews")
+                               related_name='reviews')
     title = models.ForeignKey(Title,
                               on_delete=models.CASCADE,
-                              related_name="reviews")
+                              related_name='reviews')
     text = models.TextField()
     score = models.IntegerField(null=True, blank=True)
-    pub_date = models.DateTimeField("Дата добавления",
+    pub_date = models.DateTimeField('Дата добавления',
                                     auto_now_add=True,
                                     db_index=True)
 
@@ -69,12 +84,12 @@ class Review(models.Model):
 class Comment(models.Model):
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
-                               related_name="comments")
+                               related_name='comments')
     review = models.ForeignKey(Review,
                                on_delete=models.CASCADE,
-                               related_name="comments")
+                               related_name='comments')
     text = models.TextField()
 
-    pub_date = models.DateTimeField("Дата добавления",
+    pub_date = models.DateTimeField('Дата добавления',
                                     auto_now_add=True,
                                     db_index=True)
