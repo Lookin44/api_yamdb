@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from users.models import User
+from users.models import RoleUser
 
 
 class IsAdminOrReadOnlyPermission(permissions.BasePermission):
@@ -12,7 +12,7 @@ class IsAdminOrReadOnlyPermission(permissions.BasePermission):
         if not u.is_authenticated:
             return False
 
-        return u.role == User.RoleUser.ADMIN or u.is_superuser
+        return u.role == RoleUser.ADMIN or u.is_superuser
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
@@ -21,5 +21,5 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
             return True
         u = request.user
         return (obj.author == request.user
-                or u.role == User.RoleUser.ADMIN
-                or u.role == User.RoleUser.MODERATOR)
+                or u.role == RoleUser.ADMIN
+                or u.role == RoleUser.MODERATOR)

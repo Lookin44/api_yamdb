@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from api_yamdb import settings
 
-from .models import User
+from users.models import User
 from .permissions import AdminPermission
 from .serializers import UserSerializer
 
