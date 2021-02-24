@@ -23,7 +23,8 @@ def confirmation_code_sender(request):
     serializer.is_valid(raise_exception=True)
 
     email = serializer.data['email']
-    user = User.objects.get_or_create(email=email)[0]
+    username = serializer.data['username']
+    user = User.objects.get_or_create(email=email, username=username)[0]
     confirmation_code = default_token_generator.make_token(user)
 
     send_mail(
@@ -46,8 +47,9 @@ def get_token(request):
     serializer.is_valid(raise_exception=True)
 
     email = serializer.data['email']
+    username = serializer.data['username']
     confirmation_code = serializer.data['confirmation_code']
-    user = get_object_or_404(User, email=email)
+    user = get_object_or_404(User, email=email, username=username)
     check_token = default_token_generator.check_token(user, confirmation_code)
     if check_token is False:
         return Response(

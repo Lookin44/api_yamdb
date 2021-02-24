@@ -18,8 +18,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 class EmailSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
+    username = serializers.CharField(required=True, max_length=50)
 
 
 class ConfirmationCodeSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
+    username = serializers.CharField(required=True, max_length=50)
     confirmation_code = serializers.CharField(required=True)
