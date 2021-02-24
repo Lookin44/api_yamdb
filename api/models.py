@@ -32,7 +32,7 @@ class Genre(models.Model):
 def year_validator(value):
     if value > dt.datetime.now().year:
         raise ValidationError(
-            _('Введите корректный год!'),
+            'Введите корректный год!',
             params={'value': value},
         )
 
@@ -43,14 +43,14 @@ class Title(models.Model):
         null=True,
         blank=True,
         validators=[year_validator],
-        verbose_name="год издания"
+        verbose_name="год издания",
     )
     description = models.TextField(verbose_name='описание')
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
         verbose_name='категория',
-        related_name='titles'
+        related_name='titles',
     )
 
     genre = models.ManyToManyField(

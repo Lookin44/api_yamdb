@@ -17,22 +17,23 @@ class GenreSerializer(serializers.ModelSerializer):
         model = Genre
 
 
-class CategorySlugRelatedField(serializers.SlugRelatedField):
-    def to_representation(self, obj):
-        return CategorySerializer().to_representation(obj)
+class SerializerSlugRelatedField(serializers.SlugRelatedField):
+    def __init__(self, serializer: serializers.ModelSerializer, **kwargs):
+        self.serializer = serializer
+        super(SerializerSlugRelatedField, self).__init__(**kwargs)
 
-
-class GenreSlugRelatedField(serializers.SlugRelatedField):
     def to_representation(self, obj):
-        return GenreSerializer().to_representation(obj)
+        return self.serializer.to_representation(obj)
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    category = CategorySlugRelatedField(
+    category = SerializerSlugRelatedField(
+        serializer=CategorySerializer(),
         queryset=Category.objects.all(),
         slug_field='slug',
     )
-    genre = GenreSlugRelatedField(
+    genre = SerializerSlugRelatedField(
+        serializer=GenreSerializer(),
         queryset=Genre.objects.all(),
         slug_field='slug',
         many=True,
