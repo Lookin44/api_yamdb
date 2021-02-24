@@ -6,7 +6,6 @@ from .models import RoleUser
 class AdminPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return bool(request.user.is_authenticated
-                    and (request.user.is_staff
-                         or request.user.role == RoleUser.ADMIN)
-                    )
+        return (request.user.is_authenticated
+                and (request.user.is_staff
+                     or request.user.role == RoleUser.ADMIN))

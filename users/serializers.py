@@ -14,3 +14,12 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'bio'
         )
+
+
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+
+class ConfirmationCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    confirmation_code = serializers.CharField(required=True)

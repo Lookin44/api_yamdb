@@ -1,30 +1,30 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api_yamdb import settings
-
 from users.models import User
-from .permissions import AdminPermission
-from .serializers import UserSerializer
 
-generator = default_token_generator
+from .permissions import AdminPermission
+from .serializers import UserSerializer, EmailSerializer,\
+    ConfirmationCodeSerializer
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def confirmation_code_sender(request):
+    serializer = EmailSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
 
-    email = request.data.get('email')
+    email = serializer.data['email']
     user = User.objects.get_or_create(email=email)[0]
-    confirmation_code = generator.make_token(user)
+    confirmation_code = default_token_generator.make_token(user)
 
     send_mail(
         subject='Ваш персональный код от сервиса YamDb',
@@ -34,7 +34,7 @@ def confirmation_code_sender(request):
         fail_silently=False,
     )
     return Response(
-        {"message": f"Код отправлен на почту: {email}"},
+        {'message': f'Код отправлен на почту: {email}'},
         status=status.HTTP_200_OK
     )
 
@@ -42,18 +42,20 @@ def confirmation_code_sender(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def get_token(request):
+    serializer = ConfirmationCodeSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
 
-    email = request.data.get('email')
-    confirmation_code = request.data.get('confirmation_code')
+    email = serializer.data['email']
+    confirmation_code = serializer.data['confirmation_code']
     user = get_object_or_404(User, email=email)
-    code_at_time = generator.make_token(user)
-    if code_at_time != confirmation_code:
+    check_token = default_token_generator.check_token(user, confirmation_code)
+    if check_token is False:
         return Response(
-            {"confirmation_code": "Неверный код"},
+            {'confirmation_code': 'Неверный код'},
             status=status.HTTP_400_BAD_REQUEST
         )
     token = AccessToken.for_user(user)
-    return Response({"token": f"{token}"}, status=status.HTTP_200_OK)
+    return Response({'token': f'{token}'}, status=status.HTTP_200_OK)
 
 
 class UserViewSet(ModelViewSet):
@@ -62,19 +64,18 @@ class UserViewSet(ModelViewSet):
     permission_classes = [AdminPermission]
     lookup_field = 'username'
 
-
-class UserInfo(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        queryset = User.objects.get(username=request.user.username)
-        serializer = UserSerializer(queryset)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def patch(self, request):
-        user = User.objects.get(username=request.user.username)
-        serializer = UserSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    @action(
+        detail=False,
+        methods=['get', 'patch'],
+        permission_classes=[IsAuthenticated],
+    )
+    def me(self, request, **kwargs):
+        partial = kwargs.pop('partial', True)
+        serializer = self.get_serializer(
+            request.user,
+            data=request.data,
+            partial=partial,
+        )
+        serializer.is_valid()
+        self.perform_update(serializer)
+        return Response(serializer.data)
