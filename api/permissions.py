@@ -8,18 +8,18 @@ class IsAdminOrReadOnlyPermission(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        u = request.user
-        if not u.is_authenticated:
+        user = request.user
+        if not user.is_authenticated:
             return False
 
-        return u.role == RoleUser.ADMIN or u.is_superuser
+        return user.role == RoleUser.ADMIN or user.is_superuser
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
-        u = request.user
+        user = request.user
         return (obj.author == request.user
-                or u.role == RoleUser.ADMIN
-                or u.role == RoleUser.MODERATOR)
+                or user.role == RoleUser.ADMIN
+                or user.role == RoleUser.MODERATOR)
