@@ -1,9 +1,8 @@
+from django.db.models import Avg
 from django.db.utils import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, mixins, serializers, viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from django.db.models import Avg
-
 
 from .filters import TitleFilterBackend
 from .models import Category, Genre, Review, Title
