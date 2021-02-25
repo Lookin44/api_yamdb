@@ -63,11 +63,18 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
 
     def validate(self, data):
-        if self.context['request'].method == 'POST':
-            if 'score' in data:
-                if data['score'] not in range(1, 11):
-                    raise serializers.ValidationError(
-                        'Рейтинг должен быть от 1 до 10')
+        if Review.objects.filter(
+                title=self.context['view'].kwargs.get('title_id'),
+                author=self.context['request'].user,
+        ).exists() and self.context['request'].method == 'POST':
+            raise serializers.ValidationError(
+                'Можно оставить только один отзыв на один объект.'
+            )
+        score = data['score']
+        if score < 1 or score > 10:
+            raise serializers.ValidationError(
+                'Error! Rating must be from 1 to 10'
+            )
         return data
 
 
