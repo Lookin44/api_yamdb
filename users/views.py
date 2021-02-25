@@ -12,8 +12,8 @@ from api_yamdb import settings
 from users.models import User
 
 from .permissions import AdminPermission
-from .serializers import UserSerializer, EmailSerializer,\
-    ConfirmationCodeSerializer
+from .serializers import (ConfirmationCodeSerializer, EmailSerializer,
+                          UserSerializer)
 
 
 @api_view(['POST'])
