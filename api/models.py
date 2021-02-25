@@ -44,7 +44,7 @@ class Title(models.Model):
         null=True,
         blank=True,
         validators=[year_validator],
-        verbose_name="год издания",
+        verbose_name='год издания',
     )
     description = models.TextField(verbose_name='описание')
     category = models.ForeignKey(
