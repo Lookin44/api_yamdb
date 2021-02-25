@@ -70,11 +70,6 @@ class ReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Можно оставить только один отзыв на один объект.'
             )
-        score = data['score']
-        if score < 1 or score > 10:
-            raise serializers.ValidationError(
-                'Error! Rating must be from 1 to 10'
-            )
         return data
 
 
