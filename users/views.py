@@ -50,8 +50,7 @@ def get_token(request):
     username = serializer.data['username']
     confirmation_code = serializer.data['confirmation_code']
     user = get_object_or_404(User, email=email, username=username)
-    check_token = default_token_generator.check_token(user, confirmation_code)
-    if check_token is False:
+    if not default_token_generator.check_token(user, confirmation_code):
         return Response(
             {'confirmation_code': 'Неверный код'},
             status=status.HTTP_400_BAD_REQUEST
@@ -71,13 +70,15 @@ class UserViewSet(ModelViewSet):
         methods=['get', 'patch'],
         permission_classes=[IsAuthenticated],
     )
-    def me(self, request, **kwargs):
-        partial = kwargs.pop('partial', True)
-        serializer = self.get_serializer(
-            request.user,
-            data=request.data,
-            partial=partial,
-        )
-        serializer.is_valid()
-        self.perform_update(serializer)
-        return Response(serializer.data)
+    def me(self, request):
+        if request.method == 'PATCH':
+            serializer = self.get_serializer(
+                request.user,
+                data=request.data,
+                partial=True,
+            )
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
