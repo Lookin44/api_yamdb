@@ -12,8 +12,8 @@ from api_yamdb import settings
 from users.models import User
 
 from .permissions import AdminPermission
-from .serializers import UserSerializer, EmailSerializer,\
-    ConfirmationCodeSerializer
+from .serializers import (ConfirmationCodeSerializer, EmailSerializer,
+                          UserSerializer)
 
 
 @api_view(['POST'])
@@ -23,7 +23,8 @@ def confirmation_code_sender(request):
     serializer.is_valid(raise_exception=True)
 
     email = serializer.data['email']
-    user = User.objects.get_or_create(email=email)[0]
+    username = serializer.data['username']
+    user = User.objects.get_or_create(email=email, username=username)[0]
     confirmation_code = default_token_generator.make_token(user)
 
     send_mail(
@@ -46,10 +47,10 @@ def get_token(request):
     serializer.is_valid(raise_exception=True)
 
     email = serializer.data['email']
+    username = serializer.data['username']
     confirmation_code = serializer.data['confirmation_code']
-    user = get_object_or_404(User, email=email)
-    check_token = default_token_generator.check_token(user, confirmation_code)
-    if check_token is False:
+    user = get_object_or_404(User, email=email, username=username)
+    if not default_token_generator.check_token(user, confirmation_code):
         return Response(
             {'confirmation_code': 'Неверный код'},
             status=status.HTTP_400_BAD_REQUEST
@@ -69,13 +70,15 @@ class UserViewSet(ModelViewSet):
         methods=['get', 'patch'],
         permission_classes=[IsAuthenticated],
     )
-    def me(self, request, **kwargs):
-        partial = kwargs.pop('partial', True)
-        serializer = self.get_serializer(
-            request.user,
-            data=request.data,
-            partial=partial,
-        )
-        serializer.is_valid()
-        self.perform_update(serializer)
-        return Response(serializer.data)
+    def me(self, request):
+        if request.method == 'PATCH':
+            serializer = self.get_serializer(
+                request.user,
+                data=request.data,
+                partial=True,
+            )
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)

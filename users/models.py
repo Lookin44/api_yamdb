@@ -17,3 +17,11 @@ class User(AbstractUser):
         choices=RoleUser.choices,
         default=RoleUser.USER
     )
+
+    @property
+    def is_admin(self):
+        return self.role == RoleUser.ADMIN or self.is_staff
+
+    @property
+    def is_moderator(self):
+        return self.role == RoleUser.MODERATOR

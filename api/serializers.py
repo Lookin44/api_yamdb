@@ -1,5 +1,5 @@
-from django.db.models import Avg
 from django.shortcuts import get_object_or_404
+
 from rest_framework import serializers
 
 from users.models import User
@@ -19,35 +19,32 @@ class GenreSerializer(serializers.ModelSerializer):
         model = Genre
 
 
-class CategorySlugRelatedField(serializers.SlugRelatedField):
-    def to_representation(self, obj):
-        return CategorySerializer().to_representation(obj)
+class SerializerSlugRelatedField(serializers.SlugRelatedField):
+    def __init__(self, serializer: serializers.ModelSerializer, **kwargs):
+        self.serializer = serializer
+        super(SerializerSlugRelatedField, self).__init__(**kwargs)
 
-
-class GenreSlugRelatedField(serializers.SlugRelatedField):
     def to_representation(self, obj):
-        return GenreSerializer().to_representation(obj)
+        return self.serializer.to_representation(obj)
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    category = CategorySlugRelatedField(
+    category = SerializerSlugRelatedField(
+        serializer=CategorySerializer(),
         queryset=Category.objects.all(),
         slug_field='slug',
     )
-    genre = GenreSlugRelatedField(
+    genre = SerializerSlugRelatedField(
+        serializer=GenreSerializer(),
         queryset=Genre.objects.all(),
         slug_field='slug',
         many=True,
     )
-    rating = serializers.SerializerMethodField()
+    rating = serializers.FloatField(read_only=True)
 
     class Meta:
         fields = '__all__'
         model = Title
-
-    @staticmethod
-    def get_rating(obj):
-        return obj.reviews.aggregate(rating=Avg('score'))['rating']
 
 
 class ReviewSerializer(serializers.ModelSerializer):
