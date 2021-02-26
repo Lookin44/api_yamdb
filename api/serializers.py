@@ -1,4 +1,5 @@
 from django.db.models import Avg
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from users.models import User
@@ -68,10 +69,16 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if self.context['request'].method == 'POST':
-            if 'score' in data:
-                if data['score'] not in range(1, 11):
-                    raise serializers.ValidationError(
-                        "Рейтинг должен быть от 1 до 10")
+            title = get_object_or_404(
+                Title, pk=self.context['view'].kwargs.get('title_id'))
+            author = self.context['request'].user
+            if Review.objects.filter(
+                title_id=title,
+                author=author,
+            ).exists():
+                raise serializers.ValidationError(
+                    'Можно оставить только один отзыв на один объект.'
+                )
         return data
 
 

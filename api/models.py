@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from users.models import User
 
@@ -52,7 +53,9 @@ class Review(models.Model):
                               on_delete=models.CASCADE,
                               related_name="reviews")
     text = models.TextField()
-    score = models.IntegerField(null=True, blank=True)
+    score = models.PositiveIntegerField(
+        validators=[MinValueValidator(0),
+                    MaxValueValidator(10)])
     pub_date = models.DateTimeField("Дата добавления",
                                     auto_now_add=True,
                                     db_index=True)
