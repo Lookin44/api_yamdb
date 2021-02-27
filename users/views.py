@@ -78,7 +78,7 @@ class UserViewSet(ModelViewSet):
             request.user,
             data=request.data,
             partial=True,
-            )
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save(role=request.user.role, partial=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
