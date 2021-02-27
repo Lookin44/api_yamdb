@@ -71,14 +71,14 @@ class UserViewSet(ModelViewSet):
         permission_classes=[IsAuthenticated],
     )
     def me(self, request):
-        if request.method == 'PATCH':
-            serializer = self.get_serializer(
-                request.user,
-                data=request.data,
-                partial=True,
-            )
-            serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
+        if request.method == 'GET':
+            serializer = self.get_serializer(request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        serializer = self.get_serializer(request.user)
+        serializer = self.get_serializer(
+            request.user,
+            data=request.data,
+            partial=True,
+            )
+        serializer.is_valid(raise_exception=True)
+        serializer.save(role=request.user.role, partial=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
